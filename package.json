@@ -1,0 +1,30 @@
+{
+  "name": "graduation-design-backend",
+  "version": "1.0.0",
+  "description": "zgj's graduation-design",
+  "type": "module",
+  "main": "app.ts",
+  "scripts": {
+    "start": "npx tsx --env-file=.env --watch src/app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "zgj",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crypto-js": "^4.2.0",
+    "express": "^4.21.2",
+    "express-jwt": "^8.5.1",
+    "jsonwebtoken": "^9.0.2",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/crypto-js": "^4.2.2",
+    "@types/express": "^5.0.0",
+    "@types/mysql": "^2.15.26",
+    "@types/node": "^22.10.2",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2"
+  }
+}
