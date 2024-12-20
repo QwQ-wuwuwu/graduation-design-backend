@@ -8,6 +8,15 @@ const config: ConnectionConfig = {
     port: Number(process.env.MYSQL_PORT) || 3306,
 }
 
-const db = mysql.createPool(config)
+// 测试生产环境配置
+const testConfig: ConnectionConfig = {
+    host: 'localhost',
+    user: 'root',
+    password: '123456',
+    database: 'zgj',
+    port: 3306,
+}
+
+const db = mysql.createPool(testConfig)
 
 export default db

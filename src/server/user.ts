@@ -22,7 +22,7 @@ export const initServer = () => {
 }
 
 /**
- * @param req {name, password, secretKey}
+ * @param req {name, password}
  */
 export const register = async (req: Request, res: Response, next: NextFunction) => {
     const select = `select * from user where name = ?`
@@ -34,7 +34,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
             data: null
         })
         const insert = 'insert into user(name, password, role, user_group) values(?, ?, ?, ?)'
-        const password = decrypt(req.body.password, req.body.secretKey) 
+        const password = decrypt(req.body.password, process.env.SECRET_KEY as string) 
         db.query(insert, [req.body.name, password, 2, "默认用户组"], (err, result) => {
             if(err) return next(err)
             const resultVO: ResultVO = {
@@ -48,10 +48,10 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 }
 
 /**
- * @param req {name, password, secretKey}
+ * @param req {name, password}
  */
 export const login = async (req: Request, res: Response, next: NextFunction) => {
-    const password = decrypt(req.body.password, req.body.secretKey)
+    const password = decrypt(req.body.password, process.env.SECRET_KEY as string)
     const select = 'select * from user where name = ? and password = ?'
     db.query(select, [req.body.name, password], (err, result) => {
         if(err) return next(err)

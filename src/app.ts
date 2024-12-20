@@ -3,6 +3,8 @@ import cors from 'cors';
 import userRouter from './router/user'
 import { decode } from './jwt/index'
 import { initServer } from './server/user'
+import apiRouter from '@/router/api'
+import modelRouter from './router/model';
 
 const port = process.env.PORT || 3000;
 
@@ -13,6 +15,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(decode())
 
 app.use('/api/user', userRouter)
+app.use('/api/url', apiRouter)
+app.use('/api/model', modelRouter)
 
 app.use((err: any, req: Request, res: Response) => {
     if(err.name === 'UnauthorizedError') { // token验证失败
