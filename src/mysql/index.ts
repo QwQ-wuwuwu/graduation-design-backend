@@ -8,7 +8,7 @@ const config: ConnectionConfig = {
     port: Number(process.env.MYSQL_PORT) || 3306,
 }
 
-// 测试生产环境配置
+// 测试开发环境配置
 const testConfig: ConnectionConfig = {
     host: 'localhost',
     user: 'root',

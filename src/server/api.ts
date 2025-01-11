@@ -15,13 +15,27 @@ export const createApi = (req: Request, res: Response, next: NextFunction) => {
     db.query(select, [req.query.url, req.query.method], (err, result) => {
         if(err) return next(err)
         if(result.length) return res.json({ ...resultVO, message: '接口已存在', code: 400 })
-        const insert = 'insert into api(description, type, url, method, token, model_id, model_name) values(?, ?, ?, ?, ?, ?, ?)'
+        const insert = 'insert into api(description, task_id, url, method, token, model_id, model_name, api_key) values(?, ?, ?, ?, ?, ?, ?, ?)'
         const description = req.query.description || ''
         const token = req.query.token || ''
-        const { type, url, method, model_id, model_name } = req.query
-        db.query(insert, [description, type, url, method, token, model_id, model_name], (err, result) => {
+        const api_key = req.query.api_key || ''
+        const { task_id, url, method, model_id, model_name } = req.query
+        db.query(insert, [description, task_id, url, method, token, model_id, model_name, api_key], (err, result) => {
             if(err) return next(err)
             res.json({ ...resultVO, data: result })
         })
+    })
+}
+
+export const getApiList = (req: Request, res: Response, next: NextFunction) => {
+    const select = 'select * from api'
+    db.query(select, (err, result) => {
+        if(err) return next(err)
+        const resultVO: ResultVO = {
+            code: 200,
+            message: '查询成功',
+            data: result
+        }
+        res.json(resultVO)
     })
 }

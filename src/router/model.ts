@@ -6,7 +6,6 @@ import {
     updateModelById,
     deleteModelById
 } from '@/server/model'
-import { mode } from 'crypto-js'
 
 const modelRouter = express.Router()
 

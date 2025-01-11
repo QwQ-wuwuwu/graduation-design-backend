@@ -6,7 +6,7 @@ import { Request, Response, NextFunction } from "express";
  * @param req {name, description?, context?, max_output?}
  */
 export const createModel = (req: Request, res: Response, next: NextFunction) => {
-    const { name } = req.query
+    const { name, server_from } = req.query
     const resultVO: ResultVO = {
         code: 200,
         message: '创建成功',
@@ -16,11 +16,11 @@ export const createModel = (req: Request, res: Response, next: NextFunction) => 
     db.query(select, [name], (err, result) => {
         if(err) return next(err)
         if(result.length) return res.json({ ...resultVO, message: '模型已存在', code: 400 })
-        const insert = 'insert into model(name, description, context, max_output) values(?, ?, ?, ?)'
+        const insert = 'insert into model(name, description, server_from, context, max_output) values(?, ?, ?, ?, ?)'
         const description = req.query.description || ''
         const context = req.query.context || ''
         const max_output = req.query.max_output || ''
-        db.query(insert, [name, description, context, max_output], (err, result) => {
+        db.query(insert, [name, description, server_from, context, max_output], (err, result) => {
             if(err) return next(err)
             res.json({ ...resultVO, data: result })
         })

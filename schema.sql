@@ -1,4 +1,5 @@
 -- Active: 1733314319221@@localhost@3306@zgj
+
 /* DROP DATABASE IF EXISTS `graduation`;
 CREATE DATABASE IF NOT EXISTS `graduation` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `graduation`; */
@@ -54,7 +55,7 @@ CREATE Table if NOT exists `assis_config` (
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
 
-/* 助手任务表 */
+/* 任务表 */
 CREATE Table if NOT exists `task` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     /* 不同模型任务不完全相同 */
@@ -70,6 +71,8 @@ CREATE Table if NOT exists `task` (
 CREATE Table if NOT exists `model` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
+    /* 服务提供方 */
+    server_from VARCHAR(255) NOT NULL,
     description TEXT,
     /* 模型上下文数量 */
     context VARCHAR(10),
@@ -78,6 +81,7 @@ CREATE Table if NOT exists `model` (
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )
 
+DROP TABLE IF EXISTS `api`;
 /* 接口信息表 */
 CREATE TABLE if NOT exists `api` (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -85,11 +89,13 @@ CREATE TABLE if NOT exists `api` (
     model_name VARCHAR(255) NOT NULL,
     description TEXT,
     /* 类型用途 */
-    type VARCHAR(255) NOT NULL,
+    task_id INT NOT NULL,
     url VARCHAR(255) NOT NULL,
     method VARCHAR(255) NOT NULL,
     token VARCHAR(255),
+    api_key VARCHAR(255),
     FOREIGN KEY (model_id) REFERENCES `model`(id),
+    FOREIGN KEY (task_id) REFERENCES `task`(id),
     insert_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )

@@ -5,6 +5,7 @@ import { decode } from './jwt/index'
 import { initServer } from './server/user'
 import apiRouter from '@/router/api'
 import modelRouter from './router/model';
+import taskRouter from './router/task';
 
 const port = process.env.PORT || 3000;
 
@@ -17,6 +18,7 @@ app.use(decode())
 app.use('/api/user', userRouter)
 app.use('/api/url', apiRouter)
 app.use('/api/model', modelRouter)
+app.use('/api/task', taskRouter)
 
 app.use((err: any, req: Request, res: Response) => {
     if(err.name === 'UnauthorizedError') { // token验证失败
