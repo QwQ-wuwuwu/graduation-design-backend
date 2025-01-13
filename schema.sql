@@ -1,13 +1,13 @@
--- Active: 1733314319221@@localhost@3306@zgj
+-- Active: 1734421393583@@101.200.220.142@3306@graduation
 
-/* DROP DATABASE IF EXISTS `graduation`;
+DROP DATABASE IF EXISTS `graduation`;
 CREATE DATABASE IF NOT EXISTS `graduation` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `graduation`; */
+USE `graduation`;
 
 /* 测试开发环境 */
-DROP DATABASE IF EXISTS `zgj`;
+/* DROP DATABASE IF EXISTS `zgj`;
 CREATE DATABASE IF NOT EXISTS `zgj` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `zgj`;
+USE `zgj`; */
 CREATE Table if NOT exists `user` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,

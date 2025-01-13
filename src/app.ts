@@ -7,7 +7,7 @@ import apiRouter from '@/router/api'
 import modelRouter from './router/model';
 import taskRouter from './router/task';
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3002;
 
 const app = express();
 app.use(cors());

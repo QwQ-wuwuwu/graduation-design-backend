@@ -28,12 +28,61 @@ export const createApi = (req: Request, res: Response, next: NextFunction) => {
 }
 
 export const getApiList = (req: Request, res: Response, next: NextFunction) => {
-    const select = 'select * from api'
+    const select = `select a.id, a.url, a.description, a.token, a.api_key, a.method, 
+    a.model_name, a.model_id, t.name as task_name, t.id as task_id 
+    from api a, task t where a.task_id = t.id`
     db.query(select, (err, result) => {
         if(err) return next(err)
         const resultVO: ResultVO = {
             code: 200,
             message: '查询成功',
+            data: result
+        }
+        res.json(resultVO)
+    })
+}
+
+export const getApiById = (req: Request, res: Response, next: NextFunction) => {
+    const select = `select a.id, a.url, a.description, a.token, a.api_key, a.method, 
+    a.model_name, a.model_id, t.name as task_name, t.id as task_id, t.name as task_name 
+    from api a, task t where a.task_id = t.id and a.id = ?`
+    db.query(select, [req.query.id], (err, result) => {
+        if(err) return next(err)
+        const resultVO: ResultVO = {
+            code: 200,
+            message: '查询成功',
+            data: result[0]
+        }
+        res.json(resultVO)
+    })
+}
+
+export const updateApiById = (req: Request, res: Response, next: NextFunction) => {
+    const { id, url, method, model_id, model_name, task_id } = req.body
+    const update = `update api set url = ?, method = ?, model_id = ?, model_name = ?, task_id = ?, 
+    description = ?, api_key = ?, token = ? where id = ?`
+    const description = req.body.description || ''
+    const token = req.body.token || ''
+    const api_key = req.body.api_key
+    db.query(update, [url, method, model_id, model_name, task_id, description, api_key, token, id], (err, result) => {
+        if(err) return next(err)
+        const resultVO: ResultVO = {
+            code: 200,
+            message: '更新成功',
+            data: result
+        }
+        res.json(resultVO)
+    })
+}
+
+export const deleteApiById = (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.query
+    const del = 'delete from api where id = ?'
+    db.query(del, [id], (err, result) => {
+        if(err) return next(err)
+        const resultVO: ResultVO = {
+            code: 200,
+            message: '删除成功',
             data: result
         }
         res.json(resultVO)
