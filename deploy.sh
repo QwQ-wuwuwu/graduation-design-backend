@@ -18,5 +18,6 @@ docker rmi graduation-frontend
 cd /root/graduation-design-frontend/
 docker build -t graduation-frontend .
 docker run -d --name graduation-frontend -p 3001:3001 -v /root/graduation-design-frontend/nginx.conf:/etc/nginx/nginx.conf -v /root/graduation-design-frontend/dist://usr/share/nginx/html graduation-frontend
+docker ps
 
 echo "部署完成！"

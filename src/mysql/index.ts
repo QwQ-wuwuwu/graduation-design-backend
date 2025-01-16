@@ -17,6 +17,6 @@ const testConfig: ConnectionConfig = {
     port: 3306,
 }
 
-const db = mysql.createPool(testConfig)
+const db = mysql.createPool(config)
 
 export default db
