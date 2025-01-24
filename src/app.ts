@@ -6,6 +6,8 @@ import { initServer } from './server/user'
 import apiRouter from '@/router/api'
 import modelRouter from './router/model';
 import taskRouter from './router/task';
+import sqlInit from '@/server/init'
+import knowledgeRouter from './router/knowledge';
 
 const port = process.env.PORT || 3002;
 
@@ -19,6 +21,7 @@ app.use('/api/user', userRouter)
 app.use('/api/url', apiRouter)
 app.use('/api/model', modelRouter)
 app.use('/api/task', taskRouter)
+app.use('/api/knowledge', knowledgeRouter)
 
 app.use((err: any, req: Request, res: Response) => {
     if(err.name === 'UnauthorizedError') { // token验证失败
@@ -38,5 +41,6 @@ app.use((err: any, req: Request, res: Response) => {
 
 app.listen(port, () => {
     initServer()
+    // sqlInit()
     console.log(`Server is running on port ${port}`);
 })

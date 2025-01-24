@@ -110,4 +110,44 @@ CREATE Table if NOT exists `chat_history` (
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES `user`(id),
     FOREIGN KEY (assis_id) REFERENCES `assistant`(id)
-)
+);
+
+DROP TABLE IF EXISTS `knowledge`;
+CREATE Table if NOT exists `knowledge` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    /* 0 文档知识库；1 QA知识库 */
+    type INT NOT NULL,
+    name VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT,
+    model_id INT NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY(model_id) REFERENCES `model`(id),
+    FOREIGN KEY(user_id) REFERENCES `user`(id),
+    insert_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE INDEX idx_knowledge_user_model_type ON knowledge(user_id, model_id, type);
+
+CREATE Table if NOT exists `doc_knowledge` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    knowledge_id INT NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    path VARCHAR(255) NOT NULL,
+    FOREIGN KEY(knowledge_id) REFERENCES `knowledge`(id),
+    insert_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+);
+
+CREATE Table if NOT exists `qa_knowledge` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    knowledge_id INT NOT NULL,
+    question TEXT NOT NULL,
+    answer TEXT NOT NULL,
+    /* 0 不启用；1 启用 */
+    status INT NOT NULL,
+    user_id INT NOT NULL,
+    FOREIGN KEY(knowledge_id) REFERENCES `knowledge`(id),
+    FOREIGN KEY(user_id) REFERENCES `user`(id),
+    insert_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+);
