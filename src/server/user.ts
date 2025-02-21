@@ -1,9 +1,6 @@
 import db from '../mysql/index'
 import { encode } from '../jwt/index'
-import { 
-    decrypt, 
-    encrypt 
-} from '../util/index'
+import { decrypt } from '../util/index'
 import { Request, Response, NextFunction } from 'express'
 import { ResultVO } from '@/types'
 

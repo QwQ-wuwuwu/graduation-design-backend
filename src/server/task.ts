@@ -3,13 +3,13 @@ import { Request, Response, NextFunction } from "express";
 
 export const createTask = (req: Request, res: Response, next: NextFunction) => {
     const { name, model_id } = req.body
-    const select = 'select * from task where name = ?'
+    const select = 'select * from task where name = ? and model_id = ?'
     const resultVO = {
         code: 200,
         message: '创建成功',
         data: null
     }
-    db.query(select, [name], (err, result) => {
+    db.query(select, [name, model_id], (err, result) => {
         if(err) return next(err)
         if(result.length) return res.json({ ...resultVO, message: '任务已存在', code: 400 })
         const insert = 'insert into task(name, model_id, description) values(?, ?, ?)'

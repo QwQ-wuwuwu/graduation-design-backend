@@ -4,7 +4,6 @@
         "target": "ESNext",
         "module": "ESNext",
         "outDir": "./dist",
-        "rootDir": "./src",
         "strict": true,
         "lib": ["ESNext"],
         "esModuleInterop": true,
@@ -12,6 +11,7 @@
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "skipLibCheck": true,
+        "incremental": true, // 增量编译
         "paths": {
             "@/*": ["src/*"]
         }
