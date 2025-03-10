@@ -15,3 +15,7 @@ export const createAssistant = (req: Request, res: Response, next: NextFunction)
         })
     })
 }
+
+export const updateAssistant = (req: Request, res: Response, next: NextFunction) => {
+    
+}

@@ -4,7 +4,8 @@ import {
     getKnowledgeList,
     getKnowledgeById,
     uploadDocKnowledges,
-    uploadFile
+    uploadFile,
+    getList
 } from '@/server/knowledge'
 import multer from 'multer';
 import path from 'path';
@@ -15,6 +16,7 @@ const knowledgeRouter = Router();
 
 knowledgeRouter.post('/create', createKnowledge)
 knowledgeRouter.get('/list', getKnowledgeList)
+knowledgeRouter.get('/slist', getList)
 knowledgeRouter.get('', getKnowledgeById)
 
 const storageFile = multer.diskStorage({

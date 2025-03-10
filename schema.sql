@@ -39,7 +39,7 @@ CREATE Table if NOT exists `assistant` (
     knowledge_ids VARCHAR(255),
     guide_word TEXT,
     /* 0下线 1上线 */
-    on_off INT,
+    on_off INT,git
     FOREIGN KEY (model_id) REFERENCES `model`(id),
     FOREIGN KEY (user_id) REFERENCES `user`(id),
     FOREIGN KEY (api_id) REFERENCES `api`(id),

@@ -86,3 +86,28 @@ export const deleteApiById = (req: Request, res: Response, next: NextFunction) =
         res.json(resultVO)
     })
 }
+
+export const getTasks = (req: Request, res: Response, next: NextFunction) => {
+    const select = `select id, task_name from api`;
+    db.query(select, [], (err, result) => {
+        if(err) return next(err)
+        res.json({
+            code: 200,
+            message: '',
+            data: result
+        })
+    })
+}
+
+export const getTaskByModel = (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.query
+    const select = `select id, task_name from api where model_id = ?`;
+    db.query(select, [id], (err, result) => {
+        if(err) return next(err)
+        res.json({
+            code: 200,
+            message: '',
+            data: result
+        })
+    })
+}

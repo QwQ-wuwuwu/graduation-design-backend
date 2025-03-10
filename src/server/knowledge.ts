@@ -32,6 +32,18 @@ export const getKnowledgeList = (req: Request, res: Response, next: NextFunction
     })
 }
 
+export const getList = (req: Request, res: Response, next: NextFunction) => {
+    const select = `select id, name from knowledge`
+    db.query(select, [], (err, result) => {
+        if(err) return next(err)
+        res.json({
+            code: 200,
+            message: '',
+            data: result
+        })
+    })
+}
+
 export const getKnowledgeById = (req: Request, res: Response, next: NextFunction) => {
     const select = `select k.*, u.name as user_name, m.name as model_name 
     from knowledge k 
