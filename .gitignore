@@ -1,0 +1,23 @@
+# 忽略 Node.js 项目中生成的 `node_modules` 目录
+node_modules/
+
+# 忽略编译生成的输出目录（例如：dist 或 build）
+dist/
+build/
+
+# 忽略 TypeScript 的编译文件
+*.js
+*.d.ts
+*.map
+
+# 忽略 IDE 和编辑器的配置文件
+.vscode/
+.idea/
+
+# 忽略临时文件
+*.log
+*.tmp
+
+http/
+
+files
