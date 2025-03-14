@@ -32,6 +32,7 @@ export const getKnowledgeList = (req: Request, res: Response, next: NextFunction
     })
 }
 
+// 获取简略信息的知识库列表
 export const getList = (req: Request, res: Response, next: NextFunction) => {
     const select = `select id, name from knowledge`
     db.query(select, [], (err, result) => {

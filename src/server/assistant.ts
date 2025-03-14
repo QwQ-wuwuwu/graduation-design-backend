@@ -16,6 +16,35 @@ export const createAssistant = (req: Request, res: Response, next: NextFunction)
     })
 }
 
+// 保存配置或者上线助手
 export const updateAssistant = (req: Request, res: Response, next: NextFunction) => {
-    
+    const { id, portrait, api_id, model_id, on_off } = req.body
+    const temperature = req.body.temperature || 0.6
+    const max_token = req.body.max_token || 1000
+    const knowledge_ids = req.body.knowledge_ids || '' // '1,2,3'
+    const guide_word = req.body.guide_word || ''
+    const update = `update assistant set 
+        portrait = ?, api_id = ?, model_id = ?, 
+        temperature = ?, max_token = ?, 
+        knowledge_ids = ?, guide_word = ?, on_off = ? 
+        where id = ?`
+    db.query(update, 
+        [portrait, api_id, model_id, temperature, max_token, knowledge_ids, guide_word, on_off, id],
+        (err, result) => {
+            if(err) return next(err)
+            res.json({ code: 200, message: '更新成功', data: result })
+        })
+}
+
+// 获取已上线的平台预置的或者用户创建的助手列表
+const getOnlineAssistants = (req: Request, res: Response, next: NextFunction) => {
+    const { user_id } = req.query
+    const select = `select * from assistant where user_id = ? and on_off = 1
+        union
+        select * from assistant where user_name = ? and on_off = 1`
+    // union 合并两次查询的结果并自动去重，避免 or 查询效率低的问题
+    db.query(select, [user_id, 'admin'], (err, result) => {
+        if(err) return next(err)
+        res.json({ code: 200, message: '获取成功', data: result })
+    })
 }
