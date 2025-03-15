@@ -44,7 +44,7 @@ app.use((err: any, req: Request, res: Response) => {
 app.listen(port, () => {
     initServer()
     // sqlInit()
-    readTable('api.txt', 'api')
+    // readTable('api.txt', 'api')
     // taskInit()
     console.log(`Server is running on port ${port}`);
 })

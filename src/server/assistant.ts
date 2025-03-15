@@ -2,9 +2,9 @@ import db from "@/mysql";
 import { Request, Response, NextFunction } from "express";
 
 export const createAssistant = (req: Request, res: Response, next: NextFunction) => {
-    const { name } = req.body
-    const select = 'select * from assistant where name = ?'
-    db.query(select, [name], (err, result) => {
+    const { name, user_id } = req.body
+    const select = 'select * from assistant where name = ? and user_id = ?'
+    db.query(select, [name, user_id], (err, result) => {
         if(err) return next(err)
         if(result.length > 0) return res.json({ code: 400, message: '助手已存在' })
         const { description, avatar, user_name, user_id } = req.body
@@ -18,9 +18,7 @@ export const createAssistant = (req: Request, res: Response, next: NextFunction)
 
 // 保存配置或者上线助手
 export const updateAssistant = (req: Request, res: Response, next: NextFunction) => {
-    const { id, portrait, api_id, model_id, on_off } = req.body
-    const temperature = req.body.temperature || 0.6
-    const max_token = req.body.max_token || 1000
+    const { id, portrait, api_id, model_id, on_off, temperature, max_token } = req.body
     const knowledge_ids = req.body.knowledge_ids || '' // '1,2,3'
     const guide_word = req.body.guide_word || ''
     const update = `update assistant set 
@@ -37,7 +35,7 @@ export const updateAssistant = (req: Request, res: Response, next: NextFunction)
 }
 
 // 获取已上线的平台预置的或者用户创建的助手列表
-const getOnlineAssistants = (req: Request, res: Response, next: NextFunction) => {
+export const getOnlineAssistants = (req: Request, res: Response, next: NextFunction) => {
     const { user_id } = req.query
     const select = `select * from assistant where user_id = ? and on_off = 1
         union
@@ -46,5 +44,21 @@ const getOnlineAssistants = (req: Request, res: Response, next: NextFunction) =>
     db.query(select, [user_id, 'admin'], (err, result) => {
         if(err) return next(err)
         res.json({ code: 200, message: '获取成功', data: result })
+    })
+}
+
+// 构建页面的助手
+export const getAssistants = (req: Request, res: Response, next: NextFunction) => {
+    const { user_id } = req.query
+    const select = `select * from assistant where user_id = ? 
+        union 
+        select * from assistant where user_name = ?`
+    db.query(select, [user_id, 'admin'], (err, result) => {
+        if(err) return next(err)
+        res.json({
+            code: 200,
+            message: '获取成功',
+            data: result
+        })
     })
 }
