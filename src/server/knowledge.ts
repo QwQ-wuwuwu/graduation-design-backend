@@ -22,10 +22,10 @@ export const createKnowledge = (req: Request, res: Response, next: NextFunction)
 export const getKnowledgeList = (req: Request, res: Response, next: NextFunction) => {
     const { type, user_id } = req.query;
     const select = `select k.*, u.name as user_name, m.name as model_name 
-    from knowledge k 
-    join user u on u.id = k.user_id 
-    join model m on m.id = k.model_id
-    where k.type = ? and k.user_id = ?`;
+        from knowledge k 
+        join user u on u.id = k.user_id 
+        join model m on m.id = k.model_id
+        where k.type = ? and k.user_id = ?`;
     db.query(select, [type, user_id], (err, result) => {
         if(err) return next(err);
         res.json({ code: 200, message: '查询成功', data: result });
@@ -47,10 +47,10 @@ export const getList = (req: Request, res: Response, next: NextFunction) => {
 
 export const getKnowledgeById = (req: Request, res: Response, next: NextFunction) => {
     const select = `select k.*, u.name as user_name, m.name as model_name 
-    from knowledge k 
-    join user u on u.id = k.user_id 
-    join model m on m.id = k.model_id 
-    where k.id = ?`
+        from knowledge k 
+        join user u on u.id = k.user_id 
+        join model m on m.id = k.model_id 
+        where k.id = ?`
     db.query(select, [req.query.id], (err, result) => {
         if(err) return next(err);
         res.json({ code: 200, message: '查询成功', data: result[0] });

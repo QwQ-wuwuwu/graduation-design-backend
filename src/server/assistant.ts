@@ -62,3 +62,17 @@ export const getAssistants = (req: Request, res: Response, next: NextFunction) =
         })
     })
 }
+
+// 聊天助手信息
+export const chatWithAssistant = (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.query
+    const select = `select ass.*, a.url, a.token, a.api_key, a.method, m.name as model_name 
+        from assistant ass 
+        join api a on a.id = ass.api_id 
+        join model m on ass.model_id = m.id
+        where ass.id = ?`
+    db.query(select, [id], (err, result) => {
+        if(err) return next(err)
+        res.json({ code: 200, message: '获取成功', data: result[0] })
+    })
+}
