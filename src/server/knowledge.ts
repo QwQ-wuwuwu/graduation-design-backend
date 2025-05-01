@@ -9,10 +9,10 @@ export const createKnowledge = (req: Request, res: Response, next: NextFunction)
         if(result.length > 0) {
             return res.json({ code: 400, message: '知识库已存在', data: null });
         }
-        const insert = `insert into knowledge(type, name, description, model_id, user_id) values(?, ?, ?, ?, ?)`;
-        const { type, name, model_id, user_id } = req.body
+        const insert = `insert into knowledge(type, name, description, model_id, user_id, knowledge_id) values(?, ?, ?, ?, ?, ?)`;
+        const { type, name, model_id, user_id, knowledge_id } = req.body
         const description = req.body.description || ''
-        db.query(insert, [type, name, description, model_id, user_id], (err, result) => {
+        db.query(insert, [type, name, description, model_id, user_id, knowledge_id], (err, result) => {
             if(err) return next(err);
             res.json({ code: 200, message: '创建成功', data: result });
         })

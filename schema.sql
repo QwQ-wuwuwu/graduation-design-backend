@@ -114,6 +114,8 @@ CREATE Table if NOT exists `knowledge` (
     description TEXT,
     model_id INT NOT NULL,
     user_id INT NOT NULL,
+    /* 调用模型接口生成的知识库id */
+    knowledge_id TEXT NOT NULL,
     FOREIGN KEY(model_id) REFERENCES `model`(id),
     FOREIGN KEY(user_id) REFERENCES `user`(id),
     insert_time DATETIME DEFAULT CURRENT_TIMESTAMP,
