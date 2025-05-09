@@ -18,16 +18,18 @@ export const createAssistant = (req: Request, res: Response, next: NextFunction)
 
 // 保存配置或者上线助手
 export const updateAssistant = (req: Request, res: Response, next: NextFunction) => {
-    const { id, portrait, api_id, model_id, on_off, temperature, max_token } = req.body
+    const { id, portrait, api_id, model_id, model_name, on_off, temperature, max_token } = req.body
     const knowledge_ids = req.body.knowledge_ids || '' // '1,2,3'
     const guide_word = req.body.guide_word || ''
+    const param_desc = req.body.param_desc || ''
+    const flow_limit = 15 // 每日流量限制
     const update = `update assistant set 
-        portrait = ?, api_id = ?, model_id = ?, 
-        temperature = ?, max_token = ?, 
+        portrait = ?, api_id = ?, model_id = ?, model_name = ?, 
+        temperature = ?, max_token = ?, param_desc = ?, flow_limit = ?, 
         knowledge_ids = ?, guide_word = ?, on_off = ? 
         where id = ?`
     db.query(update, 
-        [portrait, api_id, model_id, temperature, max_token, knowledge_ids, guide_word, on_off, id],
+        [portrait, api_id, model_id, temperature, max_token, param_desc, flow_limit, knowledge_ids, guide_word, on_off, id],
         (err, result) => {
             if(err) return next(err)
             res.json({ code: 200, message: '更新成功', data: result })
@@ -74,5 +76,29 @@ export const chatWithAssistant = (req: Request, res: Response, next: NextFunctio
     db.query(select, [id], (err, result) => {
         if(err) return next(err)
         res.json({ code: 200, message: '获取成功', data: result[0] })
+    })
+}
+
+export const getAssistantDetail = async (id: string) => {
+    const preSelect = `select * from assistant where id = ?`
+    const preResult: any = await new Promise((resolve, reject) => {
+        db.query(preSelect, [id], (err, result) => {
+            if(err) return reject(err)
+            resolve(result[0])
+        })
+    })
+    if (!preResult.api_id) {
+        return preResult
+    }
+    const select = `select ass.*, a.task_name 
+        from assistant ass 
+        join api a on a.id = ass.api_id 
+        where ass.id = ?`;
+    return new Promise((resolve, reject) => {
+        db.query(select, [id], (err, result) => {
+            if(err) return reject(err)
+            console.log(result)
+            resolve(result[0])
+        })
     })
 }

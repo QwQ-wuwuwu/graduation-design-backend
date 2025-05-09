@@ -8,22 +8,25 @@ USE `graduation`;
 /* DROP DATABASE IF EXISTS `zgj`;
 CREATE DATABASE IF NOT EXISTS `zgj` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `zgj`; */
+
+DROP TABLE IF EXISTS `user`;
 CREATE Table if NOT exists `user` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role INT NOT NULL,
-    role_name VARCHAR(255) UNIQUE,
-    user_group VARCHAR(255) NOT NULL,
-    meun JSON,
+    role_name VARCHAR(255),
     insert_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+DROP TABLE IF EXISTS `assistant`;
 /* 助手信息配置表 */
 CREATE Table if NOT exists `assistant` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    /* 调用大模型接口创建的应用 */
+    application_id VARCHAR(255),
     /* 头像颜色 */
     avatar VARCHAR(20) NOT NULL,
     description TEXT NOT NULL,
@@ -33,13 +36,18 @@ CREATE Table if NOT exists `assistant` (
     portrait TEXT,
     api_id INT,
     model_id INT,
+    model_name VARCHAR(255),
+    /* 模型采样温度 */
     temperature FLOAT,
     max_token INT,
     /* 可能引用多个知识库 */
     knowledge_ids VARCHAR(255),
     guide_word TEXT,
     /* 0下线 1上线 */
-    on_off INT,git
+    on_off INT,
+    flow_limit INT,
+    /* 回答风格 */
+    param_desc VARCHAR(255),
     FOREIGN KEY (model_id) REFERENCES `model`(id),
     FOREIGN KEY (user_id) REFERENCES `user`(id),
     FOREIGN KEY (api_id) REFERENCES `api`(id),
@@ -99,6 +107,7 @@ CREATE Table if NOT exists `chat_history` (
     user_id INT NOT NULL,
     assis_id INT NOT NULL,
     message TEXT,
+    attachment TEXT,
     insert_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES `user`(id),
@@ -115,7 +124,7 @@ CREATE Table if NOT exists `knowledge` (
     model_id INT NOT NULL,
     user_id INT NOT NULL,
     /* 调用模型接口生成的知识库id */
-    knowledge_id TEXT NOT NULL,
+    knowledge_id VARCHAR(255) NOT NULL,
     FOREIGN KEY(model_id) REFERENCES `model`(id),
     FOREIGN KEY(user_id) REFERENCES `user`(id),
     insert_time DATETIME DEFAULT CURRENT_TIMESTAMP,

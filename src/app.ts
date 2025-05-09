@@ -9,6 +9,7 @@ import taskRouter from './router/task';
 import { readTable } from '@/server/init'
 import knowledgeRouter from './router/knowledge';
 import assistantRouter from './router/assistant';
+import chatRouter from './router/chatRouter';
 
 const port = process.env.PORT || 3002;
 
@@ -24,6 +25,7 @@ app.use('/api/model', modelRouter)
 app.use('/api/task', taskRouter)
 app.use('/api/knowledge', knowledgeRouter)
 app.use('/api/assistant', assistantRouter)
+app.use('/api/chat', chatRouter)
 
 app.use((err: any, req: Request, res: Response) => {
     if(err.name === 'UnauthorizedError') { // token验证失败

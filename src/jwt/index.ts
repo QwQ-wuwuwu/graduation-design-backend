@@ -18,7 +18,8 @@ export const decode = () => {
         .unless(
             { path: [
                 '/api/user/login', 
-                '/api/user/register'
+                '/api/user/register',
+                '/api/chat/stream',
             ] }
         )
 }
