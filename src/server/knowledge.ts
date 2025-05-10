@@ -68,3 +68,14 @@ export const uploadFile = (req: Request, res: Response, next: NextFunction) => {
     // console.log(req.file);
     res.json({ code: 200, message: '上传成功', data: req.files });
 }
+
+export const getKnowledgeIds = (ids: number[]) => {
+    const placeholders = ids.map(() => '?').join(',');
+    const select = `select knowledge_id from knowledge where id in (${placeholders})`
+    return new Promise((resolve, reject) => {
+        db.query(select, ids, (err, result) => {
+            if(err) return reject(err);
+            resolve(result);
+        })
+    })
+}

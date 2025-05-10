@@ -1,11 +1,12 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { 
     createKnowledge,
     getKnowledgeList,
     getKnowledgeById,
     uploadDocKnowledges,
     uploadFile,
-    getList
+    getList,
+    getKnowledgeIds
 } from '@/server/knowledge'
 import multer from 'multer';
 import path from 'path';
@@ -41,5 +42,17 @@ knowledgeRouter.post('/upload_files', upload.array('files'), uploadDocKnowledges
 
 // 单文件上传
 knowledgeRouter.post(`/upload`, upload.single('file'), uploadFile)
+
+// 获取真实向量知识库 id
+knowledgeRouter.get('/ids', async (req: Request, res: Response) => {
+    const { ids } = req.query
+    const idsArray = ids?.toString().split(',').map(id => Number(id)) || []
+    const result = await getKnowledgeIds(idsArray)
+    res.json({
+        code: 200,
+        message: '获取成功',
+        data: result
+    })
+})
 
 export default knowledgeRouter;

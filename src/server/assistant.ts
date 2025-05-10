@@ -23,13 +23,14 @@ export const updateAssistant = (req: Request, res: Response, next: NextFunction)
     const guide_word = req.body.guide_word || ''
     const param_desc = req.body.param_desc || ''
     const flow_limit = 15 // 每日流量限制
+    const application_id = req.body.application_id || ''
     const update = `update assistant set 
         portrait = ?, api_id = ?, model_id = ?, model_name = ?, 
         temperature = ?, max_token = ?, param_desc = ?, flow_limit = ?, 
-        knowledge_ids = ?, guide_word = ?, on_off = ? 
+        knowledge_ids = ?, guide_word = ?, on_off = ?, application_id = ? 
         where id = ?`
     db.query(update, 
-        [portrait, api_id, model_id, temperature, max_token, param_desc, flow_limit, knowledge_ids, guide_word, on_off, id],
+        [portrait, api_id, model_id, model_name, temperature, max_token, param_desc, flow_limit, knowledge_ids, guide_word, on_off, application_id, id],
         (err, result) => {
             if(err) return next(err)
             res.json({ code: 200, message: '更新成功', data: result })
@@ -87,7 +88,7 @@ export const getAssistantDetail = async (id: string) => {
             resolve(result[0])
         })
     })
-    if (!preResult.api_id) {
+    if (!preResult?.api_id) {
         return preResult
     }
     const select = `select ass.*, a.task_name 
@@ -97,7 +98,6 @@ export const getAssistantDetail = async (id: string) => {
     return new Promise((resolve, reject) => {
         db.query(select, [id], (err, result) => {
             if(err) return reject(err)
-            console.log(result)
             resolve(result[0])
         })
     })
