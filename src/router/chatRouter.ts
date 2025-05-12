@@ -1,38 +1,38 @@
 import { Router, Request, Response } from "express";
 import fetch from "node-fetch";
 import SSEParse from "@/util/SSEParse";
+import { relationContext, addChatHistory } from "@/server/chat";
 
 const chatRouter = Router();
 
 const sessionMap = new Map<string, any>();
 
-// 走这个接口的都是调用大模型接口创建的助手
+// 添加助手会话消息
 chatRouter.post('/init', async (req: Request, res: Response) => {
-    const { api_key, app_id, prompt } = req.body;
-    const sessionId = (new Date()).getTime().toString();
-    sessionMap.set(sessionId, {
-        api_key,
-        app_id,
-        prompt,
-    });
+    const { userId, prompt, assistantId } = req.body;
+    const data = {
+        user_id: userId,
+        assis_id: assistantId,
+        content: prompt
+    }
+    const result = await addChatHistory(data);
     res.json({
         code: 200,
         message: '',
-        data: {
-            sessionId,
-        }
+        data: result
     });
 })
 
+const api_key = process.env.MODEL_TOKEN || '';
+// 应用流式会话
 chatRouter.get('/stream', async (req: Request, res: Response) => {
     res.setHeader('Content-Type', 'text/event-stream;charset=UTF-8');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
-    const { sessionId } = req.query;
-    const { api_key, app_id, prompt } = sessionMap.get(sessionId as string);
-    const url = `https://open.bigmodel.cn/api/llm-application/open/model-api/${app_id}/sse-invoke`;
+    const { applicationId } = req.query;
+    const url = `https://open.bigmodel.cn/api/llm-application/open/model-api/${applicationId}/sse-invoke`;
     try {
         const modelResponse = await fetch(url, {
             method: 'POST',
@@ -65,15 +65,22 @@ chatRouter.get('/stream', async (req: Request, res: Response) => {
             res.status(500).send('Internal Server Error');
         })
 
+        let msg = '';
         parser.on('event', (event) => {
-            // console.log(event);
+            msg += event.data;
+            if (event.event === 'finish') {
+                addChatHistory({
+                    user_id: 0,
+                    assis_id: 0,
+                    content: msg
+                })
+            }
             res.write(`data: ${JSON.stringify(event)}\n\n`);
         })
     } catch (error) {
-        console.error('Error:', error);
         res.status(200).send('Internal Server Error');
     } finally {
-        sessionMap.delete(sessionId as string);
+        
     }
 })
 
