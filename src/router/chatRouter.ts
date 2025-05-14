@@ -1,11 +1,13 @@
 import { Router, Request, Response } from "express";
 import fetch from "node-fetch";
 import SSEParse from "@/util/SSEParse";
-import { relationContext, addChatHistory } from "@/server/chat";
+import { 
+    relationContext, 
+    addChatHistory,
+    getChatHistory
+} from "@/server/chat";
 
 const chatRouter = Router();
-
-const sessionMap = new Map<string, any>();
 
 // 添加助手会话消息
 chatRouter.post('/init', async (req: Request, res: Response) => {
@@ -31,7 +33,18 @@ chatRouter.get('/stream', async (req: Request, res: Response) => {
     res.setHeader('Connection', 'keep-alive');
     res.setHeader('Access-Control-Allow-Origin', '*');
 
-    const { applicationId } = req.query;
+    const { userId, assistantId, applicationId } = req.query;
+    const result: any[] = await relationContext(15, {
+        user_id: parseInt(userId as string),
+        assis_id: parseInt(assistantId as string)
+    })
+    const prompt = result.map((item: any) => {
+        return {
+            role: item.message.role,
+            content: item.message.content
+        }
+    })
+    console.log('prompt', prompt);
     const url = `https://open.bigmodel.cn/api/llm-application/open/model-api/${applicationId}/sse-invoke`;
     try {
         const modelResponse = await fetch(url, {
@@ -65,14 +78,16 @@ chatRouter.get('/stream', async (req: Request, res: Response) => {
             res.status(500).send('Internal Server Error');
         })
 
-        let msg = '';
         parser.on('event', (event) => {
-            msg += event.data;
             if (event.event === 'finish') {
+                const prompt = {
+                    'role': 'assistant',
+                    'content': event.data
+                }
                 addChatHistory({
-                    user_id: 0,
-                    assis_id: 0,
-                    content: msg
+                    user_id: parseInt(userId as string),
+                    assis_id: parseInt(assistantId as string),
+                    content: prompt
                 })
             }
             res.write(`data: ${JSON.stringify(event)}\n\n`);
@@ -82,6 +97,16 @@ chatRouter.get('/stream', async (req: Request, res: Response) => {
     } finally {
         
     }
+})
+
+chatRouter.get('/messagelist', async (req: Request, res: Response) => {
+    const { userId, assistantId } = req.query;
+    const result = await getChatHistory(userId as string, assistantId as string);
+    res.json({
+        code: 200,
+        message: '获取成功',
+        data: result
+    });
 })
 
 export default chatRouter;

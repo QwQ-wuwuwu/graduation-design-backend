@@ -6,7 +6,6 @@ import { initServer } from './server/user'
 import apiRouter from '@/router/api'
 import modelRouter from './router/model';
 import taskRouter from './router/task';
-import { readTable } from '@/server/init'
 import knowledgeRouter from './router/knowledge';
 import assistantRouter from './router/assistant';
 import chatRouter from './router/chatRouter';

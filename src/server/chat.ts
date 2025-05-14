@@ -3,7 +3,7 @@ import db from "@/mysql";
 type ChatData = {
     user_id: number;
     assis_id: number;
-    content: string;
+    content?: any;
     attachments?: string;
 }
 
@@ -22,15 +22,27 @@ export const addChatHistory = async (chatData: ChatData) => {
 }
 
 // 获取调用大模型接口创建的应用聊天上下文
-export const relationContext = async (count = 15, chatData: ChatData) => {
+export const relationContext = async (count = 15, chatData: ChatData): Promise<any[]> => {
     const { user_id, assis_id } = chatData;
     const select = `select * from chat_history 
         where user_id = ? and assis_id = ? 
-        order by create_time desc 
+        order by insert_time 
         limit ${count}`;
     return await new Promise((resolve, reject) => {
         db.query(select, [user_id, assis_id], (err, result) => {
             if (err) reject(err);
+            resolve(result.map((item: any) => ({ ...item, message: JSON.parse(item.message) })))
+        })
+    })
+}
+
+// 获取助手聊天记录
+export const getChatHistory = async (user_id: string, assis_id: string) => {
+    const select = `select * from chat_history
+        where user_id = ? and assis_id = ?`
+    return await new Promise((resolve, reject) => {
+        db.query(select, [user_id, assis_id], (err, result) => {
+            if (err) return reject(err)
             resolve(result.map((item: any) => ({ ...item, message: JSON.parse(item.message) })))
         })
     })
